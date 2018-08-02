@@ -1,0 +1,11 @@
+{
+  "lambda": {
+    "role": "spotifycontrolbot-executor",
+    "name": "spotifycontrolbot",
+    "region": "us-east-1"
+  },
+  "api": {
+    "id": "lacgztfgd7",
+    "module": "spotifyBot"
+  }
+}

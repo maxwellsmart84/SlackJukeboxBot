@@ -1,0 +1,14 @@
+{
+  "name": "spotifycontrolbot",
+  "version": "1.0.0",
+  "description": "Remote control for theme music",
+  "main": "spotifyBot.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Maxwell Krause",
+  "license": "ISC",
+  "dependencies": {
+    "claudia-bot-builder": "^4.3.0"
+  }
+}
