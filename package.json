@@ -4,11 +4,30 @@
   "description": "Remote control for theme music",
   "main": "spotifyBot.js",
   "scripts": {
-    "test": "test"
+    "test": "test",
+    "lint": "eslint --ext .js ./"
   },
   "author": "Maxwell Krause",
   "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.0.0-beta.42",
+    "@babel/core": "^7.0.0-beta.42",
+    "@babel/node": "^7.0.0-beta.42",
+    "@babel/polyfill": "^7.0.0-beta.42",
+    "@babel/preset-env": "^7.0.0-beta.42",
+    "@babel/register": "^7.0.0-beta.42",
+    "chai": "^4.1.2",
+    "chai-http": "^4.0.0",
+    "eslint": "^4.18.2",
+    "eslint-config-maxwell": "^1.0.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.9.0",
+    "mocha": "^5.0.5",
+    "nodemon": "^1.17.1"
+  },
   "dependencies": {
-    "claudia-bot-builder": "^4.3.0"
+    "@slack/client": "^4.3.1",
+    "claudia-bot-builder": "^4.3.0",
+    "got": "^9.0.0"
   }
 }
