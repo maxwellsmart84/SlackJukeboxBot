@@ -1,7 +1,7 @@
 const botBuilder = require('claudia-bot-builder');
-const { searchSpotify, playTrack } = require('./spotifyService');
+const { searchSpotify } = require('./services/spotifyService');
+const { buildSlackTrackSearchResultMenu, postEphermal } = require('./services/slackService');
 // const got = require('got');
-// const { WebClient } = require('@slack/client');
 // const spotifyTestData = require('./testSpotifyResponse.json');
 
 // https://github.com/claudiajs/claudia-bot-builder/blob/master/docs/API.md#message-object-structure
@@ -9,8 +9,7 @@ const { searchSpotify, playTrack } = require('./spotifyService');
 module.exports = botBuilder(async (message) => {
   const { originalRequest: slackResponse } = message;
   // eslint-disable-next-line camelcase
-  const { channel_id, response_url, user_id: user } = slackResponse;
-
+  const { channel_id: channel, response_url, user_id: user } = slackResponse;
 
   //   { token: '4IyKwyYE3bgwZaQ5XF8kt8HJ',
   // team_id: 'T31PFQN2F',
@@ -29,54 +28,15 @@ module.exports = botBuilder(async (message) => {
   if (!artist || !track) {
     return 'Please enter an Artist and Track like this: Whitney Houston, I Wanna Dance With Somebody';
   }
-  const { tracks: { items: hits } = [] } = await searchSpotify({ artist, track });
-  if (hits.length === 0) {
+  const { tracks: { items: spotifySearchData } = [] } = await searchSpotify({ artist, track });
+  if (spotifySearchData.length === 0) {
     return 'Sorry we could not find the song you were looking for, try again';
   }
-  console.log('SPOTIFY SEARCH RESPONSE', hits);
-  const slackRequest = {
-    channel_id,
-    response_url,
-    user,
-    attachments: [{}],
-  };
-  return 'just the hits';
-  // const slackMenuData = hits.map(data => ({}));
-
-  // const testResponse = spotifyTestData.map((data) => {
-  //   const { url: imageUrl } = data.album.images.find(image => image.height === '64');
-  //   return {
-  //     fallback: 'Something went wrong',
-  //     text: 'Select a song from the search results',
-  //     image_url: imageUrl,
-  //     actions: [{
-  //       name: 'songList',
-  //       type: 'select',
-  //       options: [{
-  //         title: `${artists[0].name}, ${data.name}, ${album.name}`,
-  //         value: {
-  //           uri: `${data.uri}`,
-  //           id: `${data.id}`,
-  //         },
-  //       }],
-  //     }],
-
-  //   };
-  // });
-
-
-  // return songForm
-  //   .addAttachment('SR1')
-  //   .addTitle('Choose and artist and album')
-  //   .addField('Enter Artist', 'artist')
-  //   .addField('Enter Album Title', 'album')
-  //   .addField('Enter Song Title', 'track')
-  //   .get();
-  // console.log(songResponse);
-  // const { artist, track } = req.query;
-  // const cleanArtist = artist.replace(/\s/g, '+');
-  // const cleanTrack = track.replace(/\s/g, '+');
-  // const encodedParams = `${cleanArtist}+${cleanTrack}`;
-  // const spotifySearchData = await searchSpotify(message.text);
+  const slackMenuData = buildSlackTrackSearchResultMenu({ channel, response_url, user, spotifySearchData });
+  const trackSelection = await postEphermal({ data: slackMenuData });
+  console.log('SLACK RESPONSE', trackSelection);
+  // return 'just the hits';
+  // eslint-disable-next-line camelcase,no-shadow
+  return 'DEFAULT RETURN TEXT';
 }, { platforms: ['slack', 'slackSlashCommand'] });
 
