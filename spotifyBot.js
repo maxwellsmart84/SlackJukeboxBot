@@ -1,13 +1,15 @@
 const botBuilder = require('claudia-bot-builder');
 const { searchSpotify } = require('./services/spotifyService');
-const { buildSlackTrackSearchResultMenu, postEphermal } = require('./services/slackService');
+const { buildSlackTrackSearchResultMenu, postEphemeral } = require('./services/slackService');
 // const got = require('got');
 // const spotifyTestData = require('./testSpotifyResponse.json');
 
 // https://github.com/claudiajs/claudia-bot-builder/blob/master/docs/API.md#message-object-structure
 
-module.exports = botBuilder(async (message) => {
+module.exports = botBuilder(async (message, originalApiRequest) => {
   const { originalRequest: slackResponse } = message;
+  console.log('-------slack request---------', slackResponse);
+  console.log('-------original request---------', originalApiRequest);
   // eslint-disable-next-line camelcase
   const { channel_id: channel, response_url, user_id: user } = slackResponse;
 
@@ -32,11 +34,16 @@ module.exports = botBuilder(async (message) => {
   if (spotifySearchData.length === 0) {
     return 'Sorry we could not find the song you were looking for, try again';
   }
-  const slackMenuData = buildSlackTrackSearchResultMenu({ channel, response_url, user, spotifySearchData });
-  const trackSelection = await postEphermal({ data: slackMenuData });
+  const slackMenuData = buildSlackTrackSearchResultMenu({
+    channel,
+    response_url,
+    user,
+    spotifySearchData,
+  });
+  const trackSelection = await postEphemeral({ data: slackMenuData });
   console.log('SLACK RESPONSE', trackSelection);
   // return 'just the hits';
   // eslint-disable-next-line camelcase,no-shadow
   return 'DEFAULT RETURN TEXT';
-}, { platforms: ['slack', 'slackSlashCommand'] });
+});
 

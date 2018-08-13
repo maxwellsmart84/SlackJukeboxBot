@@ -1,11 +1,13 @@
 const uuidV4 = require('uuid/v4');
 const { WebClient } = require('@slack/client');
 
-const SLACK_WEB_CLIENT = new WebClient(process.env.SLACK_TOKEN);
+const SLACK_WEB_CLIENT = new WebClient(`${process.env.SLACK_TOKEN}`);
+console.log(process.env.SLACK_TOKEN);
 module.exports = {
-  async postEphermal({ data } = {}) {
+  async postEphemeral({ data } = {}) {
     try {
-      const slackResponse = await SLACK_WEB_CLIENT.postEphermal(data);
+      console.log(JSON.stringify(data, null, 2));
+      const slackResponse = await SLACK_WEB_CLIENT.chat.postEphemeral(data);
       return slackResponse;
     } catch (err) {
       console.error(err);
@@ -13,37 +15,37 @@ module.exports = {
     }
   },
   // eslint-disable-next-line camelcase
-  buildSlackTrackSearchResultMenu({ channel, response_url, user, spotifySearchData } = {}) {
+  buildSlackTrackSearchResultMenu({ channel, response_url = null, user, spotifySearchData } = {}) {
     const slackRequest = {
+      text: 'Search Results: Select a song from the dropdown',
       channel,
-      response_url,
-      response_type: 'ephemeral',
       user,
+      response_type: 'ephemeral',
       attachments: [{
-        title: 'Select a song',
+        text: 'Select a song',
         fallback: 'Something went wrong',
         callback_id: `SearchMenu_${uuidV4()}`,
+        actions: [{
+          name: 'songList',
+          type: 'select',
+        }],
       }],
     };
 
-    slackRequest.attachments[0].actions = spotifySearchData.map(buildSlackTrackSelectMenuActions);
+    slackRequest.attachments[0].actions[0].options = spotifySearchData.map(buildSlackTrackSelectMenuOptions);
     return { ...slackRequest };
   },
 
 };
 
-function buildSlackTrackSelectMenuActions(spotifyData) {
+function buildSlackTrackSelectMenuOptions(spotifyData) {
   // const { url: imageUrl } = spotifyData.album.images.find(image => image.height === '64');
   const { artists: [{ name: artistName }] } = spotifyData;
   const { album: { name: albumName } } = spotifyData;
   const { name: trackName } = spotifyData;
   const { uri: trackUri } = spotifyData;
   return {
-    name: 'songList',
-    type: 'select',
-    options: [{
-      title: `${artistName}, ${albumName}: ${trackName}`,
-      value: trackUri,
-    }],
+    text: `${artistName}, ${albumName}: ${trackName}`,
+    value: trackUri,
   };
 }
