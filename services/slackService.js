@@ -1,5 +1,7 @@
 const uuidV4 = require('uuid/v4');
 const { WebClient } = require('@slack/client');
+// need to build in track plays but it requires oauth2.0,
+// need to figure out how to build a slack menu with this.
 
 const SLACK_WEB_CLIENT = new WebClient(`${process.env.SLACK_BOT_TOKEN}`);
 console.log(process.env.SLACK_TOKEN);
@@ -15,7 +17,7 @@ module.exports = {
     }
   },
   // eslint-disable-next-line camelcase
-  buildSlackTrackSearchResultMenu({ channel, response_url = null, user, spotifySearchData } = {}) {
+  buildSlackTrackSearchResultMenu({ channel, user, spotifySearchData } = {}) {
     const slackRequest = {
       text: 'Search Results: Select a song from the dropdown',
       channel,
@@ -31,7 +33,6 @@ module.exports = {
         }],
       }],
     };
-
     slackRequest.attachments[0].actions[0].options = spotifySearchData.map(buildSlackTrackSelectMenuOptions);
     return { ...slackRequest };
   },
