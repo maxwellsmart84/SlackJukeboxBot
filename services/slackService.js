@@ -1,7 +1,7 @@
 const uuidV4 = require('uuid/v4');
 const { WebClient } = require('@slack/client');
 
-const SLACK_WEB_CLIENT = new WebClient(`${process.env.SLACK_TOKEN}`);
+const SLACK_WEB_CLIENT = new WebClient(`${process.env.SLACK_BOT_TOKEN}`);
 console.log(process.env.SLACK_TOKEN);
 module.exports = {
   async postEphemeral({ data } = {}) {

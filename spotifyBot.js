@@ -7,6 +7,8 @@ const { buildSlackTrackSearchResultMenu, postEphemeral } = require('./services/s
 // https://github.com/claudiajs/claudia-bot-builder/blob/master/docs/API.md#message-object-structure
 
 module.exports = botBuilder(async (message, originalApiRequest) => {
+  console.log('----MESSAGE----', message);
+  console.log('---MESSAGE TYPE---', message.type);
   const { originalRequest: slackResponse } = message;
   console.log('-------slack request---------', slackResponse);
   console.log('-------original request---------', originalApiRequest);
